@@ -1,69 +1,73 @@
-"use client";
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { BookOpenText, CalendarDays, FileText, HelpCircle, Image, LayoutDashboard, LogOut, MessageSquare, Settings, ShieldCheck, Stethoscope, Users, Flower2, Search } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
+import AdminSignOut from './components/sign-out'
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+const modules = [
+  { title: 'Homepage sections', description: 'Manage section headings and publication state.', href: '/admin/sections', icon: LayoutDashboard },
+  { title: 'Services & treatments', description: 'Edit services displayed on the website.', href: '/admin/services', icon: Stethoscope },
+  { title: 'Doctors', description: 'Manage profiles and biographies.', href: '/admin/doctors', icon: Users },
+  { title: 'Yoga tutorials', description: 'Manage yoga learning content.', href: '/admin/yoga', icon: Flower2 },
+  { title: 'Articles', description: 'Manage knowledge-centre articles.', href: '/admin/articles', icon: BookOpenText },
+  { title: 'Testimonials', description: 'Manage approved testimonials.', href: '/admin/testimonials', icon: MessageSquare },
+  { title: 'FAQs', description: 'Update common questions and answers.', href: '/admin/faqs', icon: HelpCircle },
+  { title: 'Appointments', description: 'Review appointment enquiries.', href: '/admin/appointments', icon: CalendarDays },
+  { title: 'Contact messages', description: 'Review contact form submissions.', href: '/admin/messages', icon: MessageSquare },
+  { title: 'SEO settings', description: 'Manage search and social metadata.', href: '/admin/seo', icon: Search },
+  { title: 'Website settings', description: 'Manage global site settings.', href: '/admin/settings', icon: Settings },
+]
 
-const nav = [
-  ["Overview", "/admin"], ["Homepage sections", "/admin/sections"], ["Services", "/admin/services"],
-  ["Doctors", "/admin/doctors"], ["Yoga", "/admin/yoga"], ["Articles", "/admin/articles"],
-  ["Testimonials", "/admin/testimonials"], ["FAQs", "/admin/faqs"], ["Appointments", "/admin/appointments"],
-  ["Messages", "/admin/messages"], ["SEO", "/admin/seo"], ["Settings", "/admin/settings"],
-];
-
-export default function AdminDashboard() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [counts, setCounts] = useState<Record<string, number | string>>({});
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let live = true;
-    async function load() {
-      try {
-        const sb = createClient();
-        const { data: { user } } = await sb.auth.getUser();
-        if (!user) { router.replace("/admin/login"); return; }
-        const { data: member, error: roleError } = await sb.from("admin_members").select("user_id,role").eq("user_id", user.id).maybeSingle();
-        if (roleError || !member) { await sb.auth.signOut(); router.replace("/admin/login"); return; }
-        setEmail(user.email || "");
-        const tables = ["site_sections","services","doctors","yoga_tutorials","articles","testimonials","faqs","appointment_requests","contact_messages"];
-        const results = await Promise.all(tables.map(async table => {
-          const { count, error } = await sb.from(table).select("id", { count: "exact", head: true });
-          return [table, error ? "—" : (count ?? 0)] as const;
-        }));
-        if (live) setCounts(Object.fromEntries(results));
-      } catch (e) { if (live) setError(e instanceof Error ? e.message : "Could not load dashboard"); }
-      finally { if (live) setLoading(false); }
-    }
-    load(); return () => { live = false; };
-  }, [router]);
-
-  async function logout() {
-    try { await createClient().auth.signOut(); } finally { router.replace("/admin/login"); }
+export default async function AdminDashboardPage() {
+  let supabase
+  try {
+    supabase = await createClient()
+  } catch {
+    redirect('/admin/login?error=configuration')
   }
-  const cards = [
-    ["Homepage sections","site_sections","/admin/sections"],["Services","services","/admin/services"],["Doctors","doctors","/admin/doctors"],
-    ["Yoga tutorials","yoga_tutorials","/admin/yoga"],["Articles","articles","/admin/articles"],["Testimonials","testimonials","/admin/testimonials"],
-    ["FAQs","faqs","/admin/faqs"],["Appointment enquiries","appointment_requests","/admin/appointments"],["Contact messages","contact_messages","/admin/messages"],
-  ];
-  return <div className="min-h-screen md:flex">
-    <aside className="w-full border-b border-[#e8dfd2] bg-white p-5 md:min-h-screen md:w-64 md:border-b-0 md:border-r">
-      <Link href="/" className="text-xs font-semibold uppercase tracking-[.18em] text-[#9278a5]">Lala Jagannath</Link>
-      <h1 className="mb-6 mt-2 text-xl font-semibold">Website CMS</h1>
-      <nav className="grid grid-cols-2 gap-1 md:grid-cols-1">{nav.map(([label,href])=><Link key={href} href={href} className={`rounded-xl px-3 py-2.5 text-sm ${href==="/admin" ? "bg-[#56396f] text-white" : "text-[#594b63] hover:bg-[#f4eff7]"}`}>{label}</Link>)}</nav>
-      <button onClick={logout} className="mt-6 w-full rounded-xl border border-[#e8dfd2] px-3 py-2 text-sm hover:bg-gray-50">Sign out</button>
-    </aside>
-    <main className="min-w-0 flex-1 p-5 md:p-9">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div><p className="text-sm text-[#9278a5]">Administration / Overview</p><h2 className="mt-1 text-3xl font-semibold">Dashboard</h2><p className="mt-2 text-sm text-gray-500">Manage content that powers the website.</p></div>
-        <div className="rounded-xl bg-white px-4 py-2 text-sm shadow-sm">{email || "Checking session…"}</div>
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/admin/login')
+
+  const { data: membership, error: membershipError } = await supabase
+    .from('admin_members')
+    .select('role')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (membershipError || !membership || !['owner', 'admin', 'editor'].includes(membership.role)) {
+    await supabase.auth.signOut()
+    redirect('/admin/login?error=not_admin')
+  }
+
+  const countTables = ['site_sections', 'services', 'doctors', 'articles', 'appointment_requests', 'contact_messages'] as const
+  const counts = await Promise.all(countTables.map(async (table) => {
+    const result = await supabase.from(table).select('*', { count: 'exact', head: true })
+    return { table, count: result.count ?? 0 }
+  }))
+  const labels: Record<(typeof countTables)[number], string> = {
+    site_sections: 'Sections', services: 'Services', doctors: 'Doctors', articles: 'Articles', appointment_requests: 'Appointments', contact_messages: 'Messages',
+  }
+
+  return (
+    <main className="min-h-screen bg-[#fbf8f2] text-stone-900">
+      <header className="border-b border-purple-100 bg-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
+          <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-800 text-white"><ShieldCheck size={21} /></div><div><p className="font-serif text-lg font-semibold">Lala Jagannath</p><p className="text-xs text-stone-500">Website administration</p></div></div>
+          <div className="flex items-center gap-3"><span className="hidden text-sm text-stone-600 sm:block">{user.email} · <span className="capitalize">{membership.role}</span></span><AdminSignOut /></div>
+        </div>
+      </header>
+      <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-10">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-purple-700">Control centre</p><h1 className="mt-2 font-serif text-3xl font-semibold sm:text-4xl">Dashboard overview</h1><p className="mt-2 text-sm text-stone-600">Manage your website content and review incoming enquiries.</p></div><Link href="/" target="_blank" className="rounded-xl border border-purple-200 bg-white px-4 py-2.5 text-sm font-semibold text-purple-800 transition hover:bg-purple-50">View public website ↗</Link></div>
+        <section aria-label="Database counts" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          {counts.map(({ table, count }) => <div key={table} className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm"><p className="text-sm text-stone-500">{labels[table]}</p><p className="mt-2 text-3xl font-semibold text-purple-900">{count}</p><p className="mt-1 text-xs text-stone-400">Database records</p></div>)}
+        </section>
+        <div className="mb-4 mt-10 flex items-center gap-2"><Image size={20} className="text-purple-800"/><h2 className="font-serif text-2xl font-semibold">Content management</h2></div>
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {modules.map(({ title, description, href, icon: Icon }) => <Link key={href} href={href} className="group rounded-2xl border border-stone-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-purple-300 hover:shadow-md"><div className="flex items-start justify-between gap-3"><div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-50 text-purple-800 group-hover:bg-purple-800 group-hover:text-white"><Icon size={21}/></div><span className="text-stone-300 transition group-hover:text-purple-700">↗</span></div><h3 className="mt-4 font-semibold">{title}</h3><p className="mt-1 text-sm leading-6 text-stone-500">{description}</p></Link>)}
+        </section>
+        <p className="mt-8 text-xs leading-5 text-stone-500">Dashboard counts are read from Supabase. If a table has no read permission or does not exist, its count may show as zero; verify the migration and RLS policies.</p>
       </div>
-      {error && <p className="mt-5 rounded-xl bg-red-50 p-4 text-sm text-red-700">{error}</p>}
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{cards.map(([label,key,href])=><Link href={href} key={key} className="group rounded-2xl border border-[#e8dfd2] bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-md"><div className="flex items-center justify-between"><span className="text-sm text-gray-500">{label}</span><span className="text-[#9278a5]">↗</span></div><div className="mt-3 text-3xl font-semibold">{loading ? "…" : (counts[key] ?? "—")}</div><p className="mt-2 text-xs text-gray-500">Records in Supabase</p></Link>)}</div>
-      <section className="mt-8 rounded-2xl border border-[#e8dfd2] bg-white p-5"><h3 className="font-semibold">Quick actions</h3><div className="mt-4 flex flex-wrap gap-3"><Link className="rounded-xl bg-[#56396f] px-4 py-2.5 text-sm font-medium text-white" href="/admin/sections">Manage homepage</Link><Link className="rounded-xl border px-4 py-2.5 text-sm" href="/admin/settings">Website settings</Link><Link className="rounded-xl border px-4 py-2.5 text-sm" href="/">View public website</Link></div><p className="mt-4 text-xs leading-5 text-gray-500">Counts and content depend on your Supabase migration and administrator membership. Run the migration before using the CMS.</p></section>
     </main>
-  </div>;
+  )
 }
