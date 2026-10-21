@@ -17,15 +17,15 @@ const services = [
   },
   {
     key: "physio",
-    image: "/pic/Best Ayurvedic Treatment for Paralysis in India (1).jpg",
+    image: "https://raw.githubusercontent.com/Priyanshu1511/Lala-Jagannath-main/refs/heads/main/Best%20Ayurvedic%20Treatment%20for%20Paralysis%20in%20India.jpg",
   },
   {
     key: "panchkarma",
-    image: "/pic/Serene Ayurvedic massage in rustic spa (1).png",
+    image: "https://raw.githubusercontent.com/Priyanshu1511/Lala-Jagannath-main/refs/heads/main/Panchakarma%20Treatments%20in%20Rishikesh.jpg",
   },
   {
     key: "acupuncture",
-    image: "/pic/cupping Priyanshu (1).jpg",
+    image: "https://raw.githubusercontent.com/Priyanshu1511/Lala-Jagannath-main/refs/heads/main/Discover%20Wellness_%20Your%20Path%20to%20Holistic%20Healing%20at%20Nirvana%20Naturopathy.jpg",
   },
   {
     key: "meditation",
