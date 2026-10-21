@@ -24,7 +24,11 @@ export function HeroSection() {
   const [showVideo, setShowVideo] = useState(false)
 
   // Set this CMS setting to a real MP4 URL or your video URL.
-  const videoUrl = useCmsSetting("site.hero_video_url", "")
+  const videoUrl =
+  useCmsSetting(
+    "site.hero_video_url",
+    "https://uddoefniuqdqitzekekl.supabase.co/storage/v1/object/public/cms-media/sections/e590a0be-dbce-4672-ad0e-9d40104e161b-shorts_duet_360P.mp4"
+  )
 
   const heroImage =
     cms?.image_url || "/pic/Yoga class in a bright hall (2).png"
