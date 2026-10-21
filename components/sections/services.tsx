@@ -29,7 +29,7 @@ const services = [
   },
   {
     key: "meditation",
-    image: "/pic/Discover Wellness_ Your Path to Holistic Healing at Nirvana Naturopathy (1).jpg",
+    image: "https://raw.githubusercontent.com/Priyanshu1511/Lala-Jagannath-main/refs/heads/main/meditation.png",
   },
 ]
 
