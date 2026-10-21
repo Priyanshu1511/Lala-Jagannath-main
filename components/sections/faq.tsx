@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { ChevronDown } from "lucide-react"
 import { useI18n } from "@/lib/i18n"
+import { useCms } from "@/lib/cms/context"
 import { cn } from "@/lib/utils"
 
 const faqs = [
@@ -12,7 +13,10 @@ const faqs = [
 ]
 
 export function FAQSection() {
-  const { t } = useI18n()
+  const { t, language } = useI18n()
+  const cms = useCms()
+  const section = cms?.sections.find(s => s.section_key === "faq")
+  const visibleFaqs = cms?.faqs.length ? cms.faqs.map((x:any)=>({q:language === "en" ? x.question_en : (x.question_hi || x.question_en), a:language === "en" ? x.answer_en : (x.answer_hi || x.answer_en), dynamic:true})) : faqs.map(f=>({...f,dynamic:false}))
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
@@ -21,13 +25,13 @@ export function FAQSection() {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground">
-            {t("faq.title")}
+            {(language === "en" ? section?.title_en : section?.title_hi) || t("faq.title")}
           </h2>
         </div>
 
         {/* FAQ Items */}
         <div className="space-y-4">
-          {faqs.map((faq, index) => (
+          {visibleFaqs.map((faq:any, index:number) => (
             <div
               key={index}
               className="bg-card rounded-2xl border border-border overflow-hidden"
@@ -38,7 +42,7 @@ export function FAQSection() {
                 aria-expanded={openIndex === index}
               >
                 <span className="font-medium text-foreground pr-4">
-                  {t(`faq.${faq.q}` as const)}
+                  {faq.dynamic ? faq.q : t(`faq.${faq.q}` as const)}
                 </span>
                 <ChevronDown
                   className={cn(
@@ -55,7 +59,7 @@ export function FAQSection() {
               >
                 <div className="overflow-hidden">
                   <p className="px-5 pb-5 text-muted-foreground leading-relaxed">
-                    {t(`faq.${faq.a}` as const)}
+                    {faq.dynamic ? faq.a : t(`faq.${faq.a}` as const)}
                   </p>
                 </div>
               </div>

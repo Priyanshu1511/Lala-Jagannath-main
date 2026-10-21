@@ -3,6 +3,7 @@
 import { ArrowRight, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
+import { useCmsSection } from "@/lib/cms/context"
 
 const programs = [
   { key: "prenatal", icon: "🤰" },
@@ -13,6 +14,7 @@ const programs = [
 
 export function LadiesWellnessSection() {
   const { t } = useI18n()
+  const cms = useCmsSection("ladies-wellness")
 
   return (
     <section id="ladies-wellness" className="py-20 lg:py-32 bg-gradient-to-br from-pink-50 via-background to-purple-50">
@@ -47,10 +49,10 @@ export function LadiesWellnessSection() {
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-100 text-pink-700 text-sm font-medium mb-4">
                 <Heart className="w-4 h-4" />
-                {t("ladies.subtitle")}
+                {cms?.subtitle_en || t("ladies.subtitle")}
               </div>
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">
-                {t("ladies.title")}
+                {cms?.title_en || t("ladies.title")}
               </h2>
             </div>
 

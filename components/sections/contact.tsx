@@ -6,9 +6,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useI18n } from "@/lib/i18n"
+import { useCmsSection, useCmsSetting } from "@/lib/cms/context"
+import { createClient } from "@/lib/supabase/client"
 
 export function ContactSection() {
   const { t } = useI18n()
+  const cms = useCmsSection("contact")
+  const phone = useCmsSetting("site.contact_phone", "+91 99999 99999")
+  const email = useCmsSetting("site.contact_email", "info@lalajagannath.com")
+  const address = useCmsSetting("site.address", t("contact.addressText"))
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
@@ -16,33 +22,42 @@ export function ContactSection() {
     e.preventDefault()
     setIsSubmitting(true)
     
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    
-    // Reset after showing success
-    setTimeout(() => setIsSubmitted(false), 3000)
+    const form = e.currentTarget
+    const values = new FormData(form)
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.from("contact_messages").insert({
+        name: String(values.get("name") || "").trim(),
+        email: String(values.get("email") || "").trim(),
+        subject: String(values.get("subject") || "Website enquiry").trim(),
+        message: String(values.get("message") || "").trim(),
+      })
+      if (error) { window.alert("Your message could not be sent. Please try again later."); return }
+      setIsSubmitted(true)
+      form.reset()
+      setTimeout(() => setIsSubmitted(false), 3000)
+    } catch {
+      window.alert("Connection error. Please try again later.")
+    } finally { setIsSubmitting(false) }
   }
 
   const contactInfo = [
     {
       icon: MapPin,
       label: t("contact.address"),
-      value: t("contact.addressText"),
+      value: address,
     },
     {
       icon: Phone,
       label: t("contact.phone"),
-      value: "+91 99999 99999",
-      href: "tel:+919999999999",
+      value: phone,
+      href: `tel:${phone.replace(/[^+\d]/g, "")}`,
     },
     {
       icon: Mail,
       label: t("contact.email"),
-      value: "info@lalajagannath.com",
-      href: "mailto:info@lalajagannath.com",
+      value: email,
+      href: `mailto:${email}`,
     },
     {
       icon: Clock,
@@ -57,9 +72,9 @@ export function ContactSection() {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            {t("contact.title")}
+            {cms?.title_en || t("contact.title")}
           </h2>
-          <p className="text-lg text-muted-foreground">{t("contact.subtitle")}</p>
+          <p className="text-lg text-muted-foreground">{cms?.subtitle_en || t("contact.subtitle")}</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">

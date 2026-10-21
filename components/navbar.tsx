@@ -6,6 +6,7 @@ import { Menu, X, Phone, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
+import { useCmsSetting } from "@/lib/cms/context"
 
 const navLinks = [
   { key: "nav.home", href: "#home" },
@@ -21,6 +22,7 @@ const navLinks = [
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const { language, setLanguage, t } = useI18n()
+  const phone = useCmsSetting("site.contact_phone", "+91 99999 99999")
 
   const toggleLanguage = () => {
     setLanguage(language === "en" ? "hi" : "en")
@@ -72,7 +74,7 @@ export function Navbar() {
 
             {/* Call Button */}
             <a
-              href="tel:+919999999999"
+              href={`tel:${phone.replace(/[^+\d]/g, "")}`}
               className="hidden md:flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
             >
               <Phone className="w-4 h-4" />

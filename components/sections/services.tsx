@@ -4,36 +4,40 @@ import Image from "next/image"
 import { ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
+import { useCms } from "@/lib/cms/context"
 
 const services = [
   {
     key: "yoga",
-    image: "https://raw.githubusercontent.com/Priyanshu1511/Lala-jagannath/refs/heads/main/pic/yoga.jpg",
+    image: "/pic/Yoga class in a bright hall (2).png",
   },
   {
     key: "diet",
-    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&q=80",
+    image: "/pic/Ayurvedic Medicines_ (1).jpg",
   },
   {
     key: "physio",
-    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80",
+    image: "/pic/Best Ayurvedic Treatment for Paralysis in India (1).jpg",
   },
   {
     key: "panchkarma",
-    image: "https://raw.githubusercontent.com/Priyanshu1511/Lala-jagannath/refs/heads/main/pic/massage.jpg",
+    image: "/pic/Serene Ayurvedic massage in rustic spa (1).png",
   },
   {
     key: "acupuncture",
-    image: "https://raw.githubusercontent.com/Priyanshu1511/Lala-jagannath/refs/heads/main/pic/cupping.jpg",
+    image: "/pic/cupping Priyanshu (1).jpg",
   },
   {
     key: "meditation",
-    image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80",
+    image: "/pic/Discover Wellness_ Your Path to Holistic Healing at Nirvana Naturopathy (1).jpg",
   },
 ]
 
 export function ServicesSection() {
   const { t, language } = useI18n()
+  const cms = useCms()
+  const section = cms?.sections.find(s => s.section_key === "services")
+  const visibleServices = cms?.services.length ? cms.services.map((s:any) => ({key:s.id, title:language === "en" ? s.title_en : (s.title_hi || s.title_en), description:language === "en" ? (s.description_en || "") : (s.description_hi || s.description_en || ""), image:s.image_url || "/pic/Ayurvedic Medicines_ (1).jpg", dynamic:true})) : services.map(s=>({...s,dynamic:false}))
 
   return (
     <section id="services" className="py-20 lg:py-32 bg-background relative overflow-hidden">
@@ -52,14 +56,14 @@ export function ServicesSection() {
             </span>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            {t("services.title")}
+            {(language === "en" ? section?.title_en : section?.title_hi) || t("services.title")}
           </h2>
-          <p className="text-lg text-muted-foreground">{t("services.subtitle")}</p>
+          <p className="text-lg text-muted-foreground">{(language === "en" ? section?.subtitle_en : section?.subtitle_hi) || t("services.subtitle")}</p>
         </div>
 
         {/* Services Grid with Images */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service) => (
+          {visibleServices.map((service:any) => (
             <div
               key={service.key}
               className="group relative rounded-3xl overflow-hidden h-80 cursor-pointer"
@@ -67,7 +71,8 @@ export function ServicesSection() {
               {/* Background Image */}
               <Image
                 src={service.image}
-                alt={t(`services.${service.key}.title` as const)}
+                unoptimized
+                alt={service.dynamic ? service.title : t(`services.${service.key}.title` as const)}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -79,10 +84,10 @@ export function ServicesSection() {
               {/* Content */}
               <div className="absolute inset-0 p-6 flex flex-col justify-end">
                 <h3 className="font-serif text-2xl font-bold text-white mb-2">
-                  {t(`services.${service.key}.title` as const)}
+                  {service.dynamic ? service.title : t(`services.${service.key}.title` as const)}
                 </h3>
                 <p className="text-white/80 text-sm leading-relaxed mb-4 line-clamp-2">
-                  {t(`services.${service.key}.description` as const)}
+                  {service.dynamic ? service.description : t(`services.${service.key}.description` as const)}
                 </p>
                 
                 {/* Hover Button */}

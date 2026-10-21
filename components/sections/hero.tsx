@@ -5,9 +5,12 @@ import Image from "next/image"
 import { ArrowRight, Phone, Users, Star, Award, Play } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
+import { useCmsSection, useCmsSetting } from "@/lib/cms/context"
 
 export function HeroSection() {
   const { t, language } = useI18n()
+  const cms = useCmsSection("hero")
+  const phone = useCmsSetting("site.contact_phone", "+91 99999 99999")
 
   return (
     <section
@@ -17,7 +20,8 @@ export function HeroSection() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <Image
-          src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=1920&q=80"
+          src={cms?.image_url || "/pic/Yoga class in a bright hall (2).png"}
+          unoptimized
           alt="Natural healing background"
           fill
           className="object-cover"
@@ -60,28 +64,28 @@ export function HeroSection() {
             {/* Heading */}
             <div className="space-y-4">
               <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance">
-                {t("hero.title")}
+                {(language === "en" ? cms?.title_en : cms?.title_hi) || t("hero.title")}
               </h1>
               <p className="text-lg sm:text-xl text-accent font-medium">
-                {t("hero.subtitle")}
+                {(language === "en" ? cms?.subtitle_en : cms?.subtitle_hi) || t("hero.subtitle")}
               </p>
             </div>
 
             {/* Description */}
             <p className="text-muted-foreground text-lg leading-relaxed max-w-xl">
-              {t("hero.description")}
+              {(language === "en" ? cms?.body_en : cms?.body_hi) || t("hero.description")}
             </p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg" className="text-base shadow-lg shadow-primary/25">
-                <Link href="#contact">
-                  {t("hero.cta")}
+                <Link href={cms?.button_url || "#contact"}>
+                  {(language === "en" ? cms?.button_label_en : cms?.button_label_hi) || t("hero.cta")}
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="text-base bg-background/50 backdrop-blur-sm">
-                <a href="tel:+919999999999">
+                <a href={`tel:${phone.replace(/[^+\d]/g, "")}`}>
                   <Phone className="mr-2 w-5 h-5" />
                   {t("hero.callNow")}
                 </a>
@@ -119,7 +123,7 @@ export function HeroSection() {
               {/* Main Image */}
               <div className="relative rounded-3xl overflow-hidden shadow-2xl">
                 <Image
-                  src="https://raw.githubusercontent.com/Priyanshu1511/Lala-jagannath/refs/heads/main/pic/tub.jpg"
+                  src="/pic/Relaxing soak in a mint-green tub (1).png"
                   alt="Natural therapy treatment"
                   width={600}
                   height={500}

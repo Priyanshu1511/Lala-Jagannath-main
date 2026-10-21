@@ -3,6 +3,7 @@
 import Image from "next/image"
 import { Award, Users, Stethoscope, Heart, CheckCircle2 } from "lucide-react"
 import { useI18n } from "@/lib/i18n"
+import { useCmsSection } from "@/lib/cms/context"
 
 const stats = [
   { key: "experience", value: "25+", icon: Award },
@@ -13,6 +14,7 @@ const stats = [
 
 export function AboutSection() {
   const { t, language } = useI18n()
+  const cms = useCmsSection("about")
 
   const highlights = language === "en" 
     ? ["Vedic Healing Traditions", "Modern Natural Therapies", "Personalized Treatment", "Holistic Wellness"]
@@ -33,7 +35,8 @@ export function AboutSection() {
             {/* Main Image */}
             <div className="relative rounded-3xl overflow-hidden shadow-2xl">
               <Image
-                src="https://raw.githubusercontent.com/Priyanshu1511/Lala-jagannath/refs/heads/main/pic/WhatsApp.jpg"
+                src={cms?.image_url || "/pic/WhatsApp Image 2026-04-08 at 15.16.13.jpg"}
+                unoptimized
                 alt="Lala Jagannath Prakritik Chikitsalay"
                 width={600}
                 height={450}
@@ -68,17 +71,17 @@ export function AboutSection() {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20">
               <Award className="w-4 h-4 text-accent" />
-              <span className="text-sm font-medium text-accent">{t("about.subtitle")}</span>
+              <span className="text-sm font-medium text-accent">{(language === "en" ? cms?.subtitle_en : cms?.subtitle_hi) || t("about.subtitle")}</span>
             </div>
 
             {/* Heading */}
             <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground">
-              {t("about.title")}
+              {(language === "en" ? cms?.title_en : cms?.title_hi) || t("about.title")}
             </h2>
 
             {/* Description */}
             <p className="text-muted-foreground text-lg leading-relaxed">
-              {t("about.description")}
+              {(language === "en" ? cms?.body_en : cms?.body_hi) || t("about.description")}
             </p>
 
             {/* Highlights */}

@@ -1,38 +1,23 @@
 # Admin login repair
 
-## 1. Install dependencies
+This repair removes the application's dependency on the optional `admin_members.active` column and makes login errors explicit. It does not reset passwords, delete data, or recreate users.
 
-Use Node.js 22 LTS or a compatible version for this Next.js project. Run `npm install` from the project root.
+## Apply
+1. Back up your current project and extract this ZIP into a new folder.
+2. Keep your own `.env.local` in the project root with the correct Supabase URL and publishable/anon key.
+3. In Supabase SQL Editor, run `supabase/migrations/202610210003_admin_login_repair.sql`.
+4. Confirm the signed-in user's UUID has a row in `public.admin_members` with role `owner`, `admin`, or `editor`.
+5. Run `npm install` (or `pnpm install` if using pnpm), then `npm run dev` / `pnpm dev`.
+6. Open `/admin/login`. The page now shows distinct messages for credential failures, membership lookup failures, and missing membership.
 
-## 2. Configure environment variables
-
-Copy `.env.example` to `.env.local` and fill in the Supabase Project URL and publishable key (or legacy anon key). Restart the development server after editing environment variables.
-
-## 3. Database requirements
-
-Run the project's SQL migration that creates `public.admin_members`. The table must include `user_id uuid` referencing `auth.users(id)` and `role` with allowed values `owner`, `admin`, and `editor`. Do not add an `active` column unless you also update the schema and application consistently.
-
-Create a user in Supabase Authentication -> Users, copy the user's exact UUID, and run:
-
+## Verify membership (read-only)
 ```sql
-insert into public.admin_members (user_id, role)
-values ('REPLACE-WITH-AUTH-USER-UUID', 'owner')
-on conflict (user_id) do update set role = 'owner';
+select u.id, u.email, m.role
+from auth.users u
+left join public.admin_members m on m.user_id = u.id
+where lower(u.email) = lower('YOUR-ADMIN-EMAIL');
 ```
 
-The `admin_members` table needs RLS enabled and an authenticated SELECT policy allowing users to read their own membership row, e.g. `using (user_id = auth.uid())`. Do not enable public access to this table.
+If `role` is null, use the UUID returned by this query to insert the intended administrator membership. Do not share passwords or secret/service-role keys.
 
-## 4. Run and log in
-
-```bash
-npm run dev
-```
-
-Visit http://localhost:3000/admin/login. Use the email and password from Supabase Authentication. The `/admin` server page calls `auth.getUser()` and checks `admin_members` before showing the dashboard.
-
-## Troubleshooting
-
-- `Invalid login credentials`: reset/set the password for the Auth user and verify email.
-- Redirects to login with `not_admin`: verify the exact UUID row in `public.admin_members` and the SELECT RLS policy.
-- Supabase configuration error: check `.env.local`, variable spelling, and restart `npm run dev`.
-- Missing `admin_members` or relation errors: run the migration in the same Supabase project whose URL is in `.env.local`.
+This source patch has not been tested against your live Supabase project; verify the browser error and server output after applying it.

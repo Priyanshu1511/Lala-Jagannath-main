@@ -4,12 +4,14 @@ import { useState, useEffect, useRef } from "react"
 import { Play, Volume2, VolumeX, ArrowRight, CheckCircle, Wind, Brain, Sparkles, Pause } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
+import { useCmsSection } from "@/lib/cms/context"
 import { cn } from "@/lib/utils"
 
 const AUDIO_URL = "https://drive.google.com/uc?export=download&id=1tXdBULB1a1F-MV2tDWGOMrc8HS_sOYxZ"
 
 export function VirtualHavanSection() {
   const { t } = useI18n()
+  const cms = useCmsSection("virtual-havan")
 
   return (
     <section id="virtual-havan" className="py-20 lg:py-32 bg-foreground text-background">
@@ -17,10 +19,10 @@ export function VirtualHavanSection() {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            {t("havan.title")}
+            {cms?.title_en || t("havan.title")}
           </h2>
-          <p className="text-lg opacity-80 mb-4">{t("havan.subtitle")}</p>
-          <p className="opacity-60">{t("havan.description")}</p>
+          <p className="text-lg opacity-80 mb-4">{cms?.subtitle_en || t("havan.subtitle")}</p>
+          <p className="opacity-60">{cms?.body_en || t("havan.description")}</p>
         </div>
 
         {/* Benefits */}

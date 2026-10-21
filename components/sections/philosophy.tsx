@@ -1,6 +1,7 @@
 "use client"
 
 import { useI18n } from "@/lib/i18n"
+import { useCmsSection } from "@/lib/cms/context"
 
 const principles = [
   { key: "truth", icon: "☀️" },
@@ -11,6 +12,7 @@ const principles = [
 
 export function PhilosophySection() {
   const { t, language } = useI18n()
+  const cms = useCmsSection("philosophy")
 
   return (
     <section id="philosophy" className="py-20 lg:py-32 bg-card relative overflow-hidden">
@@ -28,10 +30,10 @@ export function PhilosophySection() {
           <div className="space-y-8">
             <div>
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-                {t("philosophy.title")}
+                {(language === "en" ? cms?.title_en : cms?.title_hi) || t("philosophy.title")}
               </h2>
               <p className="text-lg text-accent font-medium">
-                {t("philosophy.subtitle")}
+                {(language === "en" ? cms?.subtitle_en : cms?.subtitle_hi) || t("philosophy.subtitle")}
               </p>
             </div>
 

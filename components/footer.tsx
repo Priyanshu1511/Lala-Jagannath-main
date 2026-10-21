@@ -3,9 +3,13 @@
 import Link from "next/link"
 import { Phone, Mail, MapPin, Clock } from "lucide-react"
 import { useI18n } from "@/lib/i18n"
+import { useCmsSetting } from "@/lib/cms/context"
 
 export function Footer() {
   const { t, language } = useI18n()
+  const phone = useCmsSetting("site.contact_phone", "+91 99999 99999")
+  const email = useCmsSetting("site.contact_email", "info@lalajagannath.com")
+  const address = useCmsSetting("site.address", t("contact.addressText"))
 
   const quickLinks = [
     { label: t("nav.home"), href: "#home" },
@@ -13,6 +17,8 @@ export function Footer() {
     { label: t("nav.services"), href: "#services" },
     { label: t("nav.mindHealing"), href: "#mind-healing" },
     { label: t("nav.virtualHavan"), href: "#virtual-havan" },
+    { label: "Knowledge centre", href: "/articles" },
+    { label: "Yoga tutorials", href: "/yoga" },
   ]
 
   const services = [
@@ -84,24 +90,24 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 mt-0.5 opacity-80 shrink-0" />
-                <span className="text-sm opacity-80">{t("contact.addressText")}</span>
+                <span className="text-sm opacity-80">{address}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 opacity-80 shrink-0" />
                 <a
-                  href="tel:+919999999999"
+                  href={`tel:${phone.replace(/[^+\d]/g, "")}`}
                   className="text-sm opacity-80 hover:opacity-100 transition-opacity"
                 >
-                  +91 99999 99999
+                  {phone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 opacity-80 shrink-0" />
                 <a
-                  href="mailto:info@lalajagannath.com"
+                  href={`mailto:${email}`}
                   className="text-sm opacity-80 hover:opacity-100 transition-opacity"
                 >
-                  info@lalajagannath.com
+                  {email}
                 </a>
               </li>
               <li className="flex items-start gap-3">

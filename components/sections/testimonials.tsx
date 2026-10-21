@@ -4,13 +4,14 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Star, ChevronLeft, ChevronRight, Quote } from "lucide-react"
 import { useI18n } from "@/lib/i18n"
+import { useCms } from "@/lib/cms/context"
 import { cn } from "@/lib/utils"
 
 const testimonials = [
   {
     name: { en: "Rajesh Kumar Verma", hi: "राजेश कुमार वर्मा" },
     location: { en: "Panipat, Haryana", hi: "पानीपत, हरियाणा" },
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80",
+    image: "/pic/DrJkSharma.jpg",
     text: {
       en: "After years of chronic back pain, the naturopathy treatment here gave me a new life. The doctors are incredibly knowledgeable and caring. I recommend this center to everyone.",
       hi: "कई सालों की पीठ दर्द के बाद, यहां की प्राकृतिक चिकित्सा ने मुझे नया जीवन दिया। डॉक्टर बहुत जानकार और देखभाल करने वाले हैं। मैं इस केंद्र की सभी को सिफारिश करता हूं।",
@@ -20,7 +21,7 @@ const testimonials = [
   {
     name: { en: "Sunita Devi Sharma", hi: "सुनीता देवी शर्मा" },
     location: { en: "Delhi NCR", hi: "दिल्ली एनसीआर" },
-    image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=200&q=80",
+    image: "/pic/DrMiniiSharma.jpg",
     text: {
       en: "The yoga therapy program transformed my health completely. I feel more energetic and peaceful than ever before. Dr. Minakshi Sharma is truly exceptional!",
       hi: "योग चिकित्सा कार्यक्रम ने मेरे स्वास्थ्य को पूरी तरह बदल दिया। मैं पहले से कहीं अधिक ऊर्जावान और शांत महसूस करती हूं। डॉ. मिनाक्षी शर्मा वास्तव में असाधारण हैं!",
@@ -30,7 +31,7 @@ const testimonials = [
   {
     name: { en: "Amit Singh Chauhan", hi: "अमित सिंह चौहान" },
     location: { en: "Karnal, Haryana", hi: "करनाल, हरियाणा" },
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
+    image: "/pic/DrJkSharma.jpg",
     text: {
       en: "The Panchkarma treatment was life-changing. The detox program helped me lose 15 kg and improve my digestion significantly. Worth every penny!",
       hi: "पंचकर्म उपचार जीवन बदलने वाला था। डिटॉक्स कार्यक्रम ने मुझे 15 किलो वजन कम करने और पाचन में काफी सुधार करने में मदद की। हर पैसे के लायक!",
@@ -40,7 +41,7 @@ const testimonials = [
   {
     name: { en: "Priya Gupta", hi: "प्रिया गुप्ता" },
     location: { en: "Sonipat, Haryana", hi: "सोनीपत, हरियाणा" },
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80",
+    image: "/pic/DrMiniiSharma.jpg",
     text: {
       en: "As a working professional, the stress management program was exactly what I needed. The meditation sessions are truly transformative. Thank you to the entire team!",
       hi: "एक कामकाजी पेशेवर के रूप में, तनाव प्रबंधन कार्यक्रम ठीक वही था जो मुझे चाहिए था। ध्यान सत्र वास्तव में परिवर्तनकारी हैं। पूरी टीम का धन्यवाद!",
@@ -50,7 +51,7 @@ const testimonials = [
   {
     name: { en: "Ramesh Chand Agarwal", hi: "रमेश चंद अग्रवाल" },
     location: { en: "Kurukshetra, Haryana", hi: "कुरुक्षेत्र, हरियाणा" },
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80",
+    image: "/pic/DrJkSharma.jpg",
     text: {
       en: "I came here for paralysis recovery after a stroke. The physiotherapy and acupuncture treatments helped me regain mobility. Dr. Jitendra is a miracle worker!",
       hi: "मैं स्ट्रोक के बाद लकवा रिकवरी के लिए यहां आया था। फिजियोथेरेपी और एक्यूपंक्चर उपचार ने मुझे गतिशीलता वापस पाने में मदद की। डॉ. जितेंद्र चमत्कारी हैं!",
@@ -61,6 +62,9 @@ const testimonials = [
 
 export function TestimonialsSection() {
   const { language } = useI18n()
+  const cms = useCms()
+  const section = cms?.sections.find(s => s.section_key === "testimonials")
+  const visibleTestimonials = cms?.testimonials.length ? cms.testimonials.map((x:any)=>({name:{en:x.display_name,hi:x.display_name},location:{en:x.location||"",hi:x.location||""},image:x.image_url||"/pic/DrJkSharma.jpg",text:{en:x.quote,hi:x.quote},rating:x.rating||5})) : testimonials
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
 
@@ -68,7 +72,7 @@ export function TestimonialsSection() {
     if (!isAutoPlaying) return
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length)
+      setCurrentIndex((prev) => (prev + 1) % visibleTestimonials.length)
     }, 5000)
 
     return () => clearInterval(timer)
@@ -76,12 +80,12 @@ export function TestimonialsSection() {
 
   const goToPrevious = () => {
     setIsAutoPlaying(false)
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length)
+    setCurrentIndex((prev) => (prev - 1 + visibleTestimonials.length) % visibleTestimonials.length)
   }
 
   const goToNext = () => {
     setIsAutoPlaying(false)
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length)
+    setCurrentIndex((prev) => (prev + 1) % visibleTestimonials.length)
   }
 
   return (
@@ -102,7 +106,7 @@ export function TestimonialsSection() {
             </span>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold mb-4">
-            {language === "en" ? "What Our Patients Say" : "हमारे रोगी क्या कहते हैं"}
+            {(language === "en" ? section?.title_en : section?.title_hi) || (language === "en" ? "What Our Patients Say" : "हमारे रोगी क्या कहते हैं")}
           </h2>
           <p className="opacity-80 text-lg">
             {language === "en"
@@ -124,7 +128,7 @@ export function TestimonialsSection() {
               className="flex transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-              {testimonials.map((testimonial, index) => (
+              {visibleTestimonials.map((testimonial:any, index:number) => (
                 <div key={index} className="w-full shrink-0 px-4">
                   <div className="bg-primary-foreground/10 backdrop-blur-sm rounded-3xl p-8 lg:p-12">
                     {/* Rating */}
@@ -147,6 +151,7 @@ export function TestimonialsSection() {
                       <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-accent/50">
                         <Image
                           src={testimonial.image}
+                    unoptimized
                           alt={testimonial.name[language]}
                           fill
                           className="object-cover"

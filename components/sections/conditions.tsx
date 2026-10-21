@@ -1,6 +1,7 @@
 "use client"
 
 import { useI18n } from "@/lib/i18n"
+import { useCmsSection } from "@/lib/cms/context"
 import { 
   Bone, 
   Brain, 
@@ -65,6 +66,7 @@ const conditions = [
 
 export function ConditionsSection() {
   const { language } = useI18n()
+  const cms = useCmsSection("conditions")
 
   return (
     <section className="py-20 lg:py-32 bg-gradient-to-br from-primary/5 via-background to-accent/5 relative overflow-hidden">
@@ -86,12 +88,10 @@ export function ConditionsSection() {
             </span>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            {language === "en" ? "Conditions We Treat" : "हम किन रोगों का उपचार करते हैं"}
+            {(language === "en" ? cms?.title_en : cms?.title_hi) || (language === "en" ? "Conditions We Treat" : "हम किन रोगों का उपचार करते हैं")}
           </h2>
           <p className="text-lg text-muted-foreground">
-            {language === "en"
-              ? "Comprehensive natural therapy programs for various health conditions"
-              : "विभिन्न स्वास्थ्य समस्याओं के लिए व्यापक प्राकृतिक चिकित्सा कार्यक्रम"}
+            {(language === "en" ? cms?.subtitle_en : cms?.subtitle_hi) || (language === "en" ? "Comprehensive natural therapy programs for various health conditions" : "विभिन्न स्वास्थ्य समस्याओं के लिए व्यापक प्राकृतिक चिकित्सा कार्यक्रम")}
           </p>
         </div>
 

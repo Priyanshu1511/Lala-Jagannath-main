@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import { useI18n } from "@/lib/i18n"
+import { useCms } from "@/lib/cms/context"
 import { Award, Stethoscope, Heart, Users } from "lucide-react"
 
 const doctors = [
@@ -35,6 +36,9 @@ const doctors = [
 
 export function DoctorsSection() {
   const { language } = useI18n()
+  const cms = useCms()
+  const section = cms?.sections.find(s => s.section_key === "doctors")
+  const visibleDoctors = cms?.doctors.length ? cms.doctors.map((d:any) => ({ id:d.id, name:{en:d.name,hi:d.name}, image:d.image_url || "/pic/DrJkSharma.jpg", description:{en:d.bio_en || d.title || d.specialty || "",hi:d.bio_hi || d.title || d.specialty || ""}, specialties:{en:[d.specialty || d.title || "Naturopathy"],hi:[d.specialty || d.title || "प्राकृतिक चिकित्सा"]} })) : doctors
 
   return (
     <section className="py-20 lg:py-32 bg-gradient-to-b from-secondary/50 to-background relative overflow-hidden">
@@ -54,7 +58,7 @@ export function DoctorsSection() {
             </span>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            {language === "en" ? "Meet Our Doctors" : "हमारे चिकित्सक"}
+            {(language === "en" ? section?.title_en : section?.title_hi) || (language === "en" ? "Meet Our Doctors" : "हमारे चिकित्सक")}
           </h2>
           <p className="text-lg text-muted-foreground">
             {language === "en"
@@ -65,7 +69,7 @@ export function DoctorsSection() {
 
         {/* Doctors Grid */}
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-          {doctors.map((doctor) => (
+          {visibleDoctors.map((doctor:any) => (
             <div
               key={doctor.id}
               className="group relative bg-card rounded-3xl overflow-hidden border border-border shadow-lg hover:shadow-2xl transition-all duration-500"
@@ -73,7 +77,8 @@ export function DoctorsSection() {
               {/* Image Section */}
               <div className="relative h-80 overflow-hidden">
                 <Image
-                  src={doctor.image}
+                  src={doctor.image || "/pic/DrJkSharma.jpg"}
+                  unoptimized
                   alt={doctor.name[language]}
                   fill
                   className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
