@@ -9,7 +9,7 @@ const doctors = [
   {
     id: "female",
     name: { en: "Dr. Minakshi Sharma", hi: "डॉ. मिनाक्षी शर्मा" },
-    image: "",
+    image: "https://raw.githubusercontent.com/Priyanshu1511/Lala-Jagannath-main/refs/heads/main/IMG-20261021-WA0005.jpg",
     description: {
       en: "Specialist in women's wellness, naturopathy, and holistic healing",
       hi: "महिला स्वास्थ्य, प्राकृतिक चिकित्सा और समग्र उपचार विशेषज्ञ",
@@ -22,7 +22,7 @@ const doctors = [
   {
     id: "male",
     name: { en: "Dr. Jitendra Kumar Sharma", hi: "डॉ. जितेंद्र कुमार शर्मा" },
-    image: "",
+    image: "https://raw.githubusercontent.com/Priyanshu1511/Lala-Jagannath-main/refs/heads/main/Yoga%20class%20in%20a%20bright%20hall.png",
     description: {
       en: "Expert in naturopathy, yoga therapy, and chronic disease treatment",
       hi: "प्राकृतिक चिकित्सा, योग चिकित्सा और दीर्घकालिक रोगों के विशेषज्ञ",
@@ -74,25 +74,28 @@ export function DoctorsSection() {
               key={doctor.id}
               className="group relative bg-card rounded-3xl overflow-hidden border border-border shadow-lg hover:shadow-2xl transition-all duration-500"
             >
-              {/* Image Section */}
-              <div className="relative h-80 overflow-hidden">
-                <Image
-                  src={doctor.image || "/pic/DrJkSharma.jpg"}
-                  unoptimized
-                  alt={doctor.name[language]}
-                  fill
-                  className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
-                
-                {/* Badge */}
-                <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
-                  <Award className="w-4 h-4" />
-                  {language === "en" ? "Expert" : "विशेषज्ञ"}
-                </div>
-              </div>
+             
+{/* Image Section */}
+<div className="relative h-[280px] sm:h-[320px] overflow-hidden bg-[#eee8e1]">
+  <Image
+    src={doctor.image || "/pic/DrJkSharma.jpg"}
+    unoptimized
+    alt={doctor.name[language]}
+    fill
+    sizes="(max-width: 768px) 100vw, 50vw"
+    className="object-cover object-[center_20%] scale-[0.85]"
+  />
+
+  {/* Soft white fade at the bottom */}
+  <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent pointer-events-none" />
+
+  {/* Expert Badge */}
+  <div className="absolute top-4 right-4 z-10 flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-sm font-medium text-primary-foreground">
+    <Award className="h-4 w-4" />
+    {language === "en" ? "Expert" : "विशेषज्ञ"}
+  </div>
+</div>
+
 
               {/* Content */}
               <div className="p-6 lg:p-8 space-y-4">
