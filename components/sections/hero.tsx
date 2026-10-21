@@ -27,7 +27,7 @@ export function HeroSection() {
   const videoUrl =
   useCmsSetting(
     "site.hero_video_url",
-    "https://uddoefniuqdqitzekekl.supabase.co/storage/v1/object/public/cms-media/sections/e590a0be-dbce-4672-ad0e-9d40104e161b-shorts_duet_360P.mp4"
+    "https://uddoefniuqdqitzekekl.supabase.co/storage/v1/object/public/cms-media/sections/4685e30c-9c50-40a7-ab9a-0ecf4ef0eb5b-yogacomptr.mp4"
   )
 
   const heroImage =
