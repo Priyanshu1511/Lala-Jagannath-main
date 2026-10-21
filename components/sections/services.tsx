@@ -13,7 +13,7 @@ const services = [
   },
   {
     key: "diet",
-    image: "/pic/Ayurvedic Medicines_ (1).jpg",
+    image: "https://raw.githubusercontent.com/Priyanshu1511/Lala-Jagannath-main/refs/heads/main/f7915a69a095ffada78bf48c6b62a365.jpg",
   },
   {
     key: "physio",
