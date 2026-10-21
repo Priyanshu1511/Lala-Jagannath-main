@@ -9,7 +9,7 @@ import { useCms } from "@/lib/cms/context"
 const services = [
   {
     key: "yoga",
-    image: "/pic/Yoga class in a bright hall (2).png",
+    image: "https://raw.githubusercontent.com/Priyanshu1511/Lala-Jagannath-main/refs/heads/main/app/Serene%20Ayurveda%20Yoga%20Courtyard%20Retreat.png",
   },
   {
     key: "diet",
