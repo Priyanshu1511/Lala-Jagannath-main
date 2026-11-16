@@ -14,7 +14,7 @@ export function ContactSection() {
   const cms = useCmsSection("contact")
   const phone = useCmsSetting("site.contact_phone", "+91 7015256419 ,+91-7017578117")
   const email = useCmsSetting("site.contact_email", "sharmadrminakshi@gmail.com, DrJksharma1972@gmail.com")
-  const address = useCmsSetting("site.address", t("contact.addressText"))
+  const address = useCmsSetting("site.address", "Lala jagganath Naturopathy centre, opposite of animal hospital, near Sanjay Chowk, Paliwal Nagar, Panipat, Haryana 132103")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 

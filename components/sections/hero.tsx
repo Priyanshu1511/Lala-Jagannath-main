@@ -20,7 +20,7 @@ import { useCmsSection, useCmsSetting } from "@/lib/cms/context"
 export function HeroSection() {
   const { t, language } = useI18n()
   const cms = useCmsSection("hero")
-  const phone = useCmsSetting("site.contact_phone", "+91 99999 99999")
+  const phone = useCmsSetting("site.contact_phone", "+91 7015256419")
   const [showVideo, setShowVideo] = useState(false)
 
   // Set this CMS setting to a real MP4 URL or your video URL.
