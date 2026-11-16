@@ -273,7 +273,7 @@ export function ContactSection() {
             {/* Map */}
             <div className="bg-card rounded-3xl border border-border overflow-hidden h-64 lg:h-80">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d111424.53680955844!2d76.89073463281249!3d29.38728!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390db93aa3e506b7%3A0x4dba8f40b13db6c9!2sPanipat%2C%20Haryana!5e0!3m2!1sen!2sin!4v1704067200000!5m2!1sen!2sin"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3476.4441592236617!2d76.96999699999999!3d29.386560199999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390dda51b67beb31%3A0xbe73f9e845644680!2sLa.%20Jagannath%20Yoga%20And%20Prakritik%20Chikitsalya!5e0!3m2!1sen!2sin!4v1794844669640!5m2!1sen!2sin"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
