@@ -12,8 +12,8 @@ import { createClient } from "@/lib/supabase/client"
 export function ContactSection() {
   const { t } = useI18n()
   const cms = useCmsSection("contact")
-  const phone = useCmsSetting("site.contact_phone", "+91 99999 99999")
-  const email = useCmsSetting("site.contact_email", "info@lalajagannath.com")
+  const phone = useCmsSetting("site.contact_phone", "+91 7015256419 ,+91-7017578117")
+  const email = useCmsSetting("site.contact_email", "sharmadrminakshi@gmail.com, DrJksharma1972@gmail.com")
   const address = useCmsSetting("site.address", t("contact.addressText"))
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -21,26 +21,64 @@ export function ContactSection() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
+  
     const form = e.currentTarget
     const values = new FormData(form)
+  
+    const enquiry = {
+      name: String(values.get("name") || "").trim(),
+      phone: String(values.get("phone") || "").trim(),
+      email: String(values.get("email") || "").trim(),
+      message: String(values.get("message") || "").trim(),
+    }
+  
     try {
+      // 1. Save to existing Supabase database
       const supabase = createClient()
-      const { error } = await supabase.from("contact_messages").insert({
-        name: String(values.get("name") || "").trim(),
-        email: String(values.get("email") || "").trim(),
-        subject: String(values.get("subject") || "Website enquiry").trim(),
-        message: String(values.get("message") || "").trim(),
+  
+      const { error } = await supabase
+        .from("contact_messages")
+        .insert({
+          name: enquiry.name,
+          email: enquiry.email,
+          subject: "Website enquiry",
+          message: enquiry.message,
+        })
+  
+      if (error) {
+        throw new Error("Supabase submission failed")
+      }
+  
+      // 2. Save to Google Sheets
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(enquiry),
       })
-      if (error) { window.alert("Your message could not be sent. Please try again later."); return }
+  
+      if (!response.ok) {
+        window.alert(
+          "Your enquiry was saved, but Google Sheets synchronization failed. Please contact the administrator."
+        )
+        return
+      }
+  
+      // 3. Show success
       setIsSubmitted(true)
       form.reset()
+  
       setTimeout(() => setIsSubmitted(false), 3000)
-    } catch {
-      window.alert("Connection error. Please try again later.")
-    } finally { setIsSubmitting(false) }
+  
+    } catch (error) {
+      console.error("Contact submission error:", error)
+      window.alert("Unable to send your enquiry. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
-
+  
   const contactInfo = [
     {
       icon: MapPin,

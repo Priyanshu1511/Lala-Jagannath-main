@@ -7,8 +7,8 @@ import { useCmsSetting } from "@/lib/cms/context"
 
 export function Footer() {
   const { t, language } = useI18n()
-  const phone = useCmsSetting("site.contact_phone", "+91 99999 99999")
-  const email = useCmsSetting("site.contact_email", "info@lalajagannath.com")
+  const phone = useCmsSetting("site.contact_phone", "+91 7015256419")
+  const email = useCmsSetting("site.contact_email", "sharmadrminakshi@gmail.com")
   const address = useCmsSetting("site.address", t("contact.addressText"))
 
   const quickLinks = [

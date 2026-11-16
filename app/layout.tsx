@@ -24,7 +24,7 @@ const baseMetadata: Metadata = {
   creator: "Lala Jagannath Prakritik Chikitsalay",
   openGraph: { title: "Lala Jagannath Prakritik Chikitsalay", description: "Natural healing and yoga learning resources.", type: "website", locale: "en_IN", alternateLocale: "hi_IN" },
   robots: { index: true, follow: true },
-  icons: { icon: [{ url: "/icon-light-32x32.png", media: "(prefers-color-scheme: light)" }, { url: "/icon-dark-32x32.png", media: "(prefers-color-scheme: dark)" }, { url: "/icon.svg", type: "image/svg+xml" }], apple: "/apple-icon.png" },
+  icons: { icon: [{ url: "/icon-dark-32x32.png", media: "(prefers-color-scheme: light)" }, { url: "/icon-dark-32x32.png", media: "(prefers-color-scheme: dark)" }, { url: "/icon-dark-32x32.png", type: "image/svg+xml" }], apple: "/apple-icon.png" },
 }
 export async function generateMetadata(): Promise<Metadata> {
   try {
